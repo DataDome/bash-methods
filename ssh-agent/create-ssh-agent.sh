@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! which ssh-agent; then
+    printf 'Please install ssh-agent.\n'
+    exit 1
+fi
+
 # Check if SSH_KEY_PATH exists, if not, add a default value
 if [ ! "$SSH_KEY_PATH" ]; then
     SSH_KEY_PATH="${HOME}/.ssh/keys/jenkinsdeploy.pem"
