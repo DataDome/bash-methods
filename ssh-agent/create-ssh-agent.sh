@@ -16,7 +16,7 @@ while [ ! -f "$SSH_KEY_PATH" ]; do
     read -p '> ' SSH_KEY_PATH
 done
 
-printf 'Adding %s key to ssh agent...' "${SSH_KEY_PATH}"
+printf 'Adding %s key to ssh agent...\n' "${SSH_KEY_PATH}"
 eval $(ssh-agent)
 ssh-add "${SSH_KEY_PATH}"
 printf "\e[32m[OK] Key added to SSH agent\e[0m\n"
