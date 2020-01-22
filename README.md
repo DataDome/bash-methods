@@ -57,6 +57,8 @@ The environment variable `GITHUB_CREDS` needs to be setup by following this form
 
 We advise you to use a Github service account and to create the token on this account.
 
+tets
+
 * Usage
 
 ```
