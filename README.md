@@ -13,7 +13,7 @@ To use methods in your Bash script, use this command to clone the repository:
 
 ```bash
 # Get bash methods repository
-curl -s https://raw.githubusercontent.com/DataDome/bash-methods/master/prepare.sh | bash -s "$@"
+bash <(curl -s https://raw.githubusercontent.com/DataDome/bash-methods/master/prepare.sh)
 ```
 
 After that, you just need to `source` methods in your script to execute them.
@@ -116,3 +116,66 @@ And after that, create the `.env` file with secret values.
 # Source .env file
 source ./bash-methods/env-file/source-dot-env-file.sh
 ```
+
+## Terraform
+
+As we use Terraform to deploy our infrastructure. Our BASH deployment scripts are almost all the same. We use BASH script before launching Terraform command to wrap the Terraform command and to modify configuration.
+
+### Get BASH script parameters
+
+We always use the terraform step to launch as an argument of our BASH infrastructure script. So, the script `terraform/get-script-parameters.sh` checks if the argument exists and get arguments in the right variable.
+
+The variable `STEP` will be created with the first argument. For example its value will be `init`, `plan`, `apply` or `destroy`. You can use this variable as an argument for a terraform command.
+And the variable `COMMAND_OPTIONS` will be created with all other arguments.
+
+* Requirements
+
+Your script needs to have only one argument and to be a wrapper for a Terraform command.
+
+* Usage
+
+```
+# Check terraform script parameters
+source ./bash-methods/terraform/get-script-parameters.sh
+```
+
+### Launch Docker Compose and get exit code
+
+If, like us at DataDome, you use to launch Terraform in a Docker container to easily manage versions and isolate your processes. The method `terraform/run-docker-compose-with-exit-code.sh` will permit to you to launch your `docker-compose.yml` with the service `terraform`.
+
+This method will end your script with the status code of your Terraform command launched in the Docker container.
+
+* Requirements
+
+Your need a `docker-compose.yml` in the same directory as your BASH script.
+
+For example:
+```
+version: "3.7"
+
+services:
+  terraform:
+    image: hashicorp/terraform:${TERRAFORM_VERSION}
+    working_dir: /deployment
+    volumes:
+      - ./:/deployment
+    # Overwrite 'terraform' entrypoint by nothing
+    entrypoint: ''
+    # Define the new command to be more flexible
+    command: sh -c "terraform ${STEP} ${COMMAND_OPTIONS}"
+```
+
+And your Docker service should be named `terraform`.
+
+* Usage
+
+```
+# Check terraform script parameters
+source ./bash-methods/terraform/run-docker-compose-with-exit-code.sh
+```
+
+## Contribution
+
+To contribute to the repository, you can fork it and create a PR from your fork.
+
+If you have any ideas of improvement, you can also open an issue and it will be a pleasure to talk about it.
