@@ -1,17 +1,15 @@
 #!/bin/bash
 
-# Check if number of parameter is correct
-if [[ $# -lt 1 ]] ; then
-    printf 'Error: needs at least 1 parameter(s) - called with %s parameter(s)\n' "$#"
-    printf 'Usage: %s <command ex.init|plan|apply>\n' "$(basename "$0")"
+BASEDIR=$(dirname "$(readlink -f -- "$0")")
+
+# If the user provided a custom set of variable and it doesn't contain the STEP variable,
+# we throw an error because we need it for Terraform scripts
+if [[ -n "$SCRIPT_PARAMS_VARIABLES" && ! "${SCRIPT_PARAMS_VARIABLES[@]}" =~ "STEP" ]]; then
+    printf "Error: STEP variable isn't in your \`SCRIPT_PARAMS_VARIABLES\`. It's needed by Terraform scripts\n" >&2
     exit 1
 fi
 
-# Get the first argument as the terraform step that will be launched
-export STEP=$1; shift
-# Get all other command options
-# We use it to add other arguments to terraform commands
-export COMMAND_OPTIONS="$@"
+source "$BASEDIR"/bash-methods/components/check-bash-parameters.sh
 
 # When we run a `terraform output` command, we want the script to only display
 # the output of terraform, not the logs of the script.

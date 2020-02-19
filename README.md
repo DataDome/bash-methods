@@ -117,33 +117,61 @@ And after that, create the `.env` file with secret values.
 source ./bash-methods/env-file/source-dot-env-file.sh
 ```
 
-## Terraform
+## Get BASH script parameters
 
-As we use Terraform to deploy our infrastructure. Our BASH deployment scripts are almost all the same. We use BASH script before launching Terraform command to wrap the Terraform command and to modify configuration.
-
-### Get BASH script parameters
-
-We always use the terraform step to launch as an argument of our BASH infrastructure script. So, the script `terraform/get-script-parameters.sh` checks if the argument exists and get arguments in the right variable.
-
-The variable `STEP` will be created with the first argument. For example its value will be `init`, `plan`, `apply` or `destroy`. You can use this variable as an argument for a terraform command.
-And the variable `COMMAND_OPTIONS` will be created with all other arguments.
+You can use the script `components/check-bash-parameters.sh` to parse scripts arguments. By default it will wait 1 argument and export it as `STEP` variable.
+All the others arguments are exported as `COMMAND_OPTIONS`.
+If you want to customize which parameters you want, you can export theses 2 variables:
+- `SCRIPT_PARAMS_VARIABLES`: A bash array containing variables names you want to export (ex: `export SCRIPT_PARAMS_VARIABLES=(PROVIDER REGION STEP)`).
+- `SCRIPT_PARAMS_USAGE`: The corresponding usage
 
 * Requirements
 
-Your script needs to have only one argument and to be a wrapper for a Terraform command.
+There is no specific requirements for this method.
 
 * Usage
 
 ```
-# Check terraform script parameters
+# Check script parameters
+source ./bash-methods/components/check-bash-parameters.sh
+```
+
+or
+
+```
+# Check custom script parameters
+export SCRIPT_PARAMS_VARIABLES=(PROVIDER REGION STEP)
+export SCRIPT_PARAMS_USAGE='<provider> <region> <step ex.init|plan|apply>'
+source ./bash-methods/components/check-bash-parameters.sh
+```
+
+## Terraform
+
+As we use Terraform to deploy our infrastructure. Our BASH deployment scripts are almost all the same. We use BASH script before launching Terraform command to wrap the Terraform command and to modify configuration.
+We advise you to use both `terraform/get-script-parameters.sh` and `terraform/run-docker-compose-with-exit-code.sh` in the same script because 
+
+### Get parameters for Terraform script
+
+You can use the script `terraform/get-script-parameters.sh`, it does the same as the `components/check-bash-parameters.sh` script, but you must have a `STEP` variable in your list.
+It will clean all script logs from stdout if the step that you want to do is an `output`. It does that by redirecting stdout to `/dev/null` before the script can print anything. Then when you will launch the Terraform container with `terraform/run-docker-compose-with-exit-code.sh`, it will reactivate stdout to print the output.
+This permits to parse the output of Terraform in scripts without all the script logs poluate stdout.
+
+* Requirements
+
+If you use custom parameters for your bash script, you must have a `STEP` parameters in your list.
+
+* Usage
+
+```
+# Check Terraform parameters
 source ./bash-methods/terraform/get-script-parameters.sh
 ```
 
 ### Launch Docker Compose and get exit code
 
-If, like us at DataDome, you use to launch Terraform in a Docker container to easily manage versions and isolate your processes. The method `terraform/run-docker-compose-with-exit-code.sh` will permit to you to launch your `docker-compose.yml` with the service `terraform`.
+If, like us at DataDome, you use to launch Terraform in a Docker container to easily manage versions and isolate your processes, the method `terraform/run-docker-compose-with-exit-code.sh` will permit you to launch your `docker-compose.yml` with the service `terraform`.
 
-This method will end your script with the status code of your Terraform command launched in the Docker container.
+This method will exit your script with the status code of your Terraform command launched in the Docker container.
 
 * Requirements
 
