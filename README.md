@@ -127,13 +127,13 @@ If you want to customize which parameters you want, you can export theses 2 vari
 
 * Requirements
 
-Your script needs to have only one argument and to be a wrapper for a Terraform command.
+There is no specific requirements for this method.
 
 * Usage
 
 ```
 # Check script parameters
-source ./bash-methods/terraform/get-script-parameters.sh
+source ./bash-methods/components/check-bash-parameters.sh
 ```
 
 or
@@ -142,22 +142,36 @@ or
 # Check custom script parameters
 export SCRIPT_PARAMS_VARIABLES=(PROVIDER REGION STEP)
 export SCRIPT_PARAMS_USAGE='<provider> <region> <step ex.init|plan|apply>'
-source ./bash-methods/terraform/get-script-parameters.sh
+source ./bash-methods/components/check-bash-parameters.sh
 ```
-### Get parameters for Terraform script
-
-You can also use the script `terraform/get-script-parameters.sh`, it does the same but you must have a `STEP` variable in your list and it will clean all script logs from stdout if the step that you want to do is an `output`.
-It permits to parse the output of Terraform in scripts without all the script logs poluate stdout.
 
 ## Terraform
 
 As we use Terraform to deploy our infrastructure. Our BASH deployment scripts are almost all the same. We use BASH script before launching Terraform command to wrap the Terraform command and to modify configuration.
+We advise you to use both `terraform/get-script-parameters.sh` and `terraform/run-docker-compose-with-exit-code.sh` in the same script because 
+
+### Get parameters for Terraform script
+
+You can use the script `terraform/get-script-parameters.sh`, it does the same as the `components/check-bash-parameters.sh` script, but you must have a `STEP` variable in your list.
+It will clean all script logs from stdout if the step that you want to do is an `output`. It does that by redirecting stdout to `/dev/null` before the script can print anything. Then when you will launch the Terraform container with `terraform/run-docker-compose-with-exit-code.sh`, it will reactivate stdout to print the output.
+This permits to parse the output of Terraform in scripts without all the script logs poluate stdout.
+
+* Requirements
+
+If you use custom parameters for your bash script, you must have a `STEP` parameters in your list.
+
+* Usage
+
+```
+# Check Terraform parameters
+source ./bash-methods/terraform/get-script-parameters.sh
+```
 
 ### Launch Docker Compose and get exit code
 
-If, like us at DataDome, you use to launch Terraform in a Docker container to easily manage versions and isolate your processes. The method `terraform/run-docker-compose-with-exit-code.sh` will permit to you to launch your `docker-compose.yml` with the service `terraform`.
+If, like us at DataDome, you use to launch Terraform in a Docker container to easily manage versions and isolate your processes, the method `terraform/run-docker-compose-with-exit-code.sh` will permit you to launch your `docker-compose.yml` with the service `terraform`.
 
-This method will end your script with the status code of your Terraform command launched in the Docker container.
+This method will exit your script with the status code of your Terraform command launched in the Docker container.
 
 * Requirements
 
