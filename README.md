@@ -130,7 +130,7 @@ If you want to customize which parameters you want, you can export theses 2 vari
 - `SCRIPT_PARAMS_USAGE`: The corresponding usage
 
 You can also use the script `terraform/get-script-parameters.sh`, it does the same but you have to have a `STEP` variable in your list and he will clean all script logs from stdout if the step you want to do is an `output`.
-This permit to parse the output of terraform in scripts without all the script logs poluate stdout
+It permits to parse the output of Terraform in scripts without all the script logs poluate stdout.
 
 * Requirements
 
