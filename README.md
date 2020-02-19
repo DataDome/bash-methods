@@ -117,20 +117,13 @@ And after that, create the `.env` file with secret values.
 source ./bash-methods/env-file/source-dot-env-file.sh
 ```
 
-## Terraform
-
-As we use Terraform to deploy our infrastructure. Our BASH deployment scripts are almost all the same. We use BASH script before launching Terraform command to wrap the Terraform command and to modify configuration.
-
-### Get BASH script parameters
+## Get BASH script parameters
 
 You can use the script `components/check-bash-parameters.sh` to parse scripts arguments. By default it will wait 1 argument and export it as `STEP` variable.
 All the others arguments are exported as `COMMAND_OPTIONS`.
 If you want to customize which parameters you want, you can export theses 2 variables:
 - `SCRIPT_PARAMS_VARIABLES`: A bash array containing variables names you want to export (ex: `export SCRIPT_PARAMS_VARIABLES=(PROVIDER REGION STEP)`).
 - `SCRIPT_PARAMS_USAGE`: The corresponding usage
-
-You can also use the script `terraform/get-script-parameters.sh`, it does the same but you must have a `STEP` variable in your list and it will clean all script logs from stdout if the step that you want to do is an `output`.
-It permits to parse the output of Terraform in scripts without all the script logs poluate stdout.
 
 * Requirements
 
@@ -151,6 +144,14 @@ export SCRIPT_PARAMS_VARIABLES=(PROVIDER REGION STEP)
 export SCRIPT_PARAMS_USAGE='<provider> <region> <step ex.init|plan|apply>'
 source ./bash-methods/terraform/get-script-parameters.sh
 ```
+### Get parameters for Terraform script
+
+You can also use the script `terraform/get-script-parameters.sh`, it does the same but you must have a `STEP` variable in your list and it will clean all script logs from stdout if the step that you want to do is an `output`.
+It permits to parse the output of Terraform in scripts without all the script logs poluate stdout.
+
+## Terraform
+
+As we use Terraform to deploy our infrastructure. Our BASH deployment scripts are almost all the same. We use BASH script before launching Terraform command to wrap the Terraform command and to modify configuration.
 
 ### Launch Docker Compose and get exit code
 
