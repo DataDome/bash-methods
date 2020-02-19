@@ -123,10 +123,14 @@ As we use Terraform to deploy our infrastructure. Our BASH deployment scripts ar
 
 ### Get BASH script parameters
 
-We always use the terraform step to launch as an argument of our BASH infrastructure script. So, the script `terraform/get-script-parameters.sh` checks if the argument exists and get arguments in the right variable.
+You can use the script `components/check-bash-parameters.sh` to parse scripts arguments. By default it will wait 1 argument and export it as `STEP` variable.
+All the others arguments are exported as `COMMAND_OPTIONS`.
+If you want to customize which parameters you want, you can export theses 2 variables:
+- `SCRIPT_PARAMS_VARIABLES`: A bash array containing variables names you want to export (ex: `export SCRIPT_PARAMS_VARIABLES=(PROVIDER REGION STEP)`).
+- `SCRIPT_PARAMS_USAGE`: The corresponding usage
 
-The variable `STEP` will be created with the first argument. For example its value will be `init`, `plan`, `apply` or `destroy`. You can use this variable as an argument for a terraform command.
-And the variable `COMMAND_OPTIONS` will be created with all other arguments.
+You can also use the script `terraform/get-script-parameters.sh`, it does the same but you have to have a `STEP` variable in your list and he will clean all script logs from stdout if the step you want to do is an `output`.
+This permit to parse the output of terraform in scripts without all the script logs poluate stdout
 
 * Requirements
 
@@ -135,7 +139,16 @@ Your script needs to have only one argument and to be a wrapper for a Terraform 
 * Usage
 
 ```
-# Check terraform script parameters
+# Check script parameters
+source ./bash-methods/terraform/get-script-parameters.sh
+```
+
+or
+
+```
+# Check custom script parameters
+export SCRIPT_PARAMS_VARIABLES=(PROVIDER REGION STEP)
+export SCRIPT_PARAMS_USAGE='<provider> <region> <step ex.init|plan|apply>'
 source ./bash-methods/terraform/get-script-parameters.sh
 ```
 
