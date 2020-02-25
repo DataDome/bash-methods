@@ -6,22 +6,23 @@ if [ ! ${GITHUB_CREDS} ]; then
     exit 1
 fi
 
-# Check if the .gitconfig file already exists, if not create it
-if [ ! -f ".gitconfig" ]; then
-    # Create .gitconfig file
-    cat << EOF > ".gitconfig"
+# Create a tmp directory to store the git credential socket
+tmp_dir=$(mktemp -dt git-XXXXXXXXXXXX)
+
+# Configure the credentials in the cache git credential helper, see https://git-scm.com/docs/git-credential-cache
+printf "url=https://github.com\nusername=%s\npassword=%s\n\n" "${GITHUB_CREDS%:*}" "${GITHUB_CREDS#*:}" | \
+git -c credential.helper="cache --socket ${tmp_dir}/agent --timeout 900" credential approve
+
+# Ensure permissions are not too open
+chmod -R 0700 $tmp_dir
+
+export GIT_AUTH_SOCK="${tmp_dir}/agent"
+
+# Create .gitconfig file
+cat << EOF > ".gitconfig"
 [url "https://github.com/"]
     insteadOf = ssh://git@github.com
     insteadOf = git@github.com:
 [credential]
-    helper = store
+    helper = "cache --socket /git-agent"
 EOF
-fi
-
-# Check if the .git-credentials file already exists, if not create it
-if [ ! -f ".git-credentials" ]; then
-    # Create .git-credenatials file
-    cat << EOF > ".git-credentials"
-https://${GITHUB_CREDS}@github.com
-EOF
-fi
