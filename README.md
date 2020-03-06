@@ -117,6 +117,29 @@ And after that, create the `.env` file with secret values.
 source ./bash-methods/env-file/source-dot-env-file.sh
 ```
 
+## environment variables management
+
+### Check environment variables
+
+It is a pain for everybody to check if an environment variable is defined at the beginning of a script. That's why we created the script `env-var/check-env-vars.sh` to check them by providing an array of environment variable name to check.
+
+You can use this script after the one described in the part `Source .env file` to check if all your credentials are defined.
+
+The script fails if it misses one environment variable from the list.
+
+* Requirements
+
+Create the environment variable `REQUIRED_ENV_VARS` and list the environment variable name to check.
+
+* Usage
+
+```
+# Define required environment variables
+export REQUIRED_ENV_VARS=( AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY GITHUB_CREDS)
+# Check environment variables
+source "./bash-methods/env-var/check-env-vars.sh
+```
+
 ## Get BASH script parameters
 
 You can use the script `components/check-bash-parameters.sh` to parse scripts arguments. By default it will wait 1 argument and export it as `STEP` variable.
