@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if ! which ssh-agent; then
-    printf 'Please install ssh-agent.\n'
+    printf 'Please install ssh-agent.\n' >&2 
     exit 1
 fi
 

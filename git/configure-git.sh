@@ -2,7 +2,7 @@
 
 # Check if GITHUB_CREDS exists
 if [ ! ${GITHUB_CREDS} ]; then
-    printf 'The variable GITHUB_CREDS does not exist. Impossible to configure GIT.\n'
+    printf 'The variable GITHUB_CREDS does not exist. Impossible to configure GIT.\n' >&2
     exit 1
 fi
 
