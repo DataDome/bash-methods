@@ -9,7 +9,16 @@ We made it as a library to share it with the community. We don't use BASH functi
 
 ## Usage
 
-To use methods in your Bash script, use this command to clone the repository:
+To use methods in your Bash script, we recommend you to setup a git submodule in you repository. You can do it with:
+
+```bash
+git submodule add -b master https://github.com/DataDome/bash-methods.git
+git submodule init
+```
+
+You can then create a `BASH_METHODS_PATH` variable in your scripts, with the path to the bash methods directory.
+
+If you don't want to use submodules, you can use this command to clone the repository in the script where you want to use the bash-methods:
 
 ```bash
 # Get bash methods repository
