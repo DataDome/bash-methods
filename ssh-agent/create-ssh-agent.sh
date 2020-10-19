@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if ! which ssh-agent; then
     printf 'Please install ssh-agent.\n' >&2 
