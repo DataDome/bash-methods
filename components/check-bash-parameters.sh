@@ -11,7 +11,7 @@ fi
 script_params_number="${#SCRIPT_PARAMS_VARIABLES[@]}"
 
 # Check if number of provided parameters is correct
-if [[ "$#" < "$script_params_number" ]]; then
+if [ "$#" -lt "$script_params_number" ]; then
     printf 'Error: needs %s parameter(s) - called with %s parameter(s)\n' "$script_params_number" "$#" >&2
     printf 'Usage: %s %s\n' "$(basename "$0")" "$SCRIPT_PARAMS_USAGE" >&2
     exit 1
