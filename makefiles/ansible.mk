@@ -17,7 +17,7 @@ DOCKER_COMMAND?=docker run \
 				--volume ${SSH_AUTH_SOCK}:/ssh-agent \
 				--workdir /provisioning \
 				--user "$(shell id -u):$(shell id -g)" \
-				--env-file env_template \
+				--tty \
 				--env HOME=/provisioning \
 				--env SSH_AUTH_SOCK=/ssh-agent \
 				${DOCKER_OPTIONS} \
@@ -40,4 +40,11 @@ apply: ssh-config
 	@printf "\e[1;34mAnsible will apply changes, please don't forget to run your playbook in check mode.\nAre you sure you want to continue? [y/n]: \e[0m" && read ans && [ $${ans:-N} = y ]
 	@${DOCKER_COMMAND} ansible-playbook --diff ${o} $(PLAYBOOK_FILE)
 
-.PHONY: all ssh-config install-roles check apply
+shell:
+	$(eval DOCKER_OPTIONS+=--interactive --env HISTFILE=/dev/null)
+	${DOCKER_COMMAND} /bin/sh
+
+clean:
+	@rm -rf .ansible*
+
+.PHONY: all ssh-config install-roles check apply shell clean

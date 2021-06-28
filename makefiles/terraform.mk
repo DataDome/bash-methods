@@ -9,7 +9,6 @@ DOCKER_COMMAND?=docker run \
 				--volume /etc/passwd:/etc/passwd:ro \
 				--workdir /deployment \
 				--user "$(shell id -u):$(shell id -g)" \
-				--env-file env_template \
 				--env HOME=/deployment \
 				--env SSH_AUTH_SOCK=/ssh-agent \
 				${DOCKER_OPTIONS} \
@@ -32,7 +31,11 @@ apply:
 	@printf "\e[1;34mTerraform will apply your last plan\nAre you sure you want to continue? [y/n]: \e[0m" && read ans && [ $${ans:-N} = y ]
 	@${DOCKER_COMMAND} apply .terraformplan
 
+shell:
+	$(eval DOCKER_OPTIONS+=--interactive --tty --env HISTFILE=/dev/null)
+	${DOCKER_COMMAND} /bin/sh
+
 clean:
 	@rm -rf .terraform*
 
-.PHONY: all ssh-config init plan apply clean
+.PHONY: all ssh-config init plan apply shell clean
