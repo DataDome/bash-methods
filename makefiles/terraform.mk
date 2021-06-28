@@ -1,5 +1,19 @@
-export USERID=$(shell id -u)
-export GROUPID=$(shell id -g)
+TF_VERSION?=1.0.0
+
+DOCKER_IMAGE?=hashicorp/terraform
+
+DOCKER_COMMAND?=docker run \
+				--rm \
+				--volume $(shell pwd):/deployment \
+				--volume ${SSH_AUTH_SOCK}:/ssh-agent \
+				--volume /etc/passwd:/etc/passwd:ro \
+				--workdir /deployment \
+				--user "$(shell id -u):$(shell id -g)" \
+				--env-file env_template \
+				--env HOME=/deployment \
+				--env SSH_AUTH_SOCK=/ssh-agent \
+				${DOCKER_OPTIONS} \
+				${DOCKER_IMAGE}:${TF_VERSION}
 
 all: init plan
 
@@ -9,14 +23,14 @@ ifndef SSH_AUTH_SOCK
 endif
 
 init: ssh-config
-	@docker-compose run --rm terraform init
+	@${DOCKER_COMMAND} init
 
 plan:
-	@docker-compose run --rm terraform plan -out .terraformplan
+	@${DOCKER_COMMAND} plan -out .terraformplan
 
 apply:
 	@printf "\e[1;34mTerraform will apply your last plan\nAre you sure you want to continue? [y/n]: \e[0m" && read ans && [ $${ans:-N} = y ]
-	@docker-compose run --rm terraform apply .terraformplan
+	@${DOCKER_COMMAND} apply .terraformplan
 
 clean:
 	@rm -rf .terraform*
