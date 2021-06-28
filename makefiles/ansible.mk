@@ -17,9 +17,9 @@ DOCKER_COMMAND?=docker run \
 				--volume ${SSH_AUTH_SOCK}:/ssh-agent \
 				--workdir /provisioning \
 				--user "$(shell id -u):$(shell id -g)" \
-				--tty \
 				--env HOME=/provisioning \
 				--env SSH_AUTH_SOCK=/ssh-agent \
+				--env ANSIBLE_FORCE_COLOR=true \
 				${DOCKER_OPTIONS} \
 				${DOCKER_IMAGE}:${ANSIBLE_VERSION}
 
@@ -41,7 +41,7 @@ apply: ssh-config
 	@${DOCKER_COMMAND} ansible-playbook --diff ${o} $(PLAYBOOK_FILE)
 
 shell:
-	$(eval DOCKER_OPTIONS+=--interactive --env HISTFILE=/dev/null --entrypoint /bin/sh)
+	$(eval DOCKER_OPTIONS+=--interactive --tty --env HISTFILE=/dev/null --entrypoint /bin/sh)
 	@${DOCKER_COMMAND}
 
 clean:
