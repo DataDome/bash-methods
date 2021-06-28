@@ -42,7 +42,7 @@ apply: ssh-config
 
 shell:
 	$(eval DOCKER_OPTIONS+=--interactive --env HISTFILE=/dev/null)
-	${DOCKER_COMMAND} /bin/sh
+	@${DOCKER_COMMAND} /bin/sh
 
 clean:
 	@rm -rf .ansible*
