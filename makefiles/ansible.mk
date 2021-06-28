@@ -41,8 +41,8 @@ apply: ssh-config
 	@${DOCKER_COMMAND} ansible-playbook --diff ${o} $(PLAYBOOK_FILE)
 
 shell:
-	$(eval DOCKER_OPTIONS+=--interactive --env HISTFILE=/dev/null)
-	@${DOCKER_COMMAND} /bin/sh
+	$(eval DOCKER_OPTIONS+=--interactive --env HISTFILE=/dev/null --entrypoint /bin/sh)
+	@${DOCKER_COMMAND}
 
 clean:
 	@rm -rf .ansible*

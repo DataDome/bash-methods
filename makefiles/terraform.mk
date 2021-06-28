@@ -32,8 +32,8 @@ apply:
 	@${DOCKER_COMMAND} apply .terraformplan
 
 shell:
-	$(eval DOCKER_OPTIONS+=--interactive --tty --env HISTFILE=/dev/null)
-	${DOCKER_COMMAND} /bin/sh
+	$(eval DOCKER_OPTIONS+=--interactive --tty --env HISTFILE=/dev/null --entrypoint /bin/sh)
+	@${DOCKER_COMMAND}
 
 clean:
 	@rm -rf .terraform*
