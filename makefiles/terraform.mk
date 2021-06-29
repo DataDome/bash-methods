@@ -11,6 +11,7 @@ DOCKER_COMMAND?=docker run \
 				--user "$(shell id -u):$(shell id -g)" \
 				--env HOME=/deployment \
 				--env SSH_AUTH_SOCK=/ssh-agent \
+				--env GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 				${DOCKER_OPTIONS} \
 				${DOCKER_IMAGE}:${TF_VERSION}
 
@@ -36,6 +37,6 @@ shell:
 	@${DOCKER_COMMAND}
 
 clean:
-	@rm -rf .terraform*
+	@find . -name '.terraform*' -not -name '.terraform.lock.hcl' -exec rm -rf {} +
 
 .PHONY: all ssh-config init plan apply shell clean
