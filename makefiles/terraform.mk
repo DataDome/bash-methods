@@ -1,17 +1,19 @@
 TF_VERSION?=1.0.0
 
+SSH_KNOWN_HOSTS_FILE?=${HOME}/.ssh/known_hosts
+
 DOCKER_IMAGE?=hashicorp/terraform
 
 DOCKER_COMMAND?=docker run \
 				--rm \
 				--volume $(shell pwd):/deployment \
 				--volume ${SSH_AUTH_SOCK}:/ssh-agent \
+				--volume ${SSH_KNOWN_HOSTS_FILE}:/etc/ssh/ssh_known_hosts:ro \
 				--volume /etc/passwd:/etc/passwd:ro \
 				--workdir /deployment \
 				--user "$(shell id -u):$(shell id -g)" \
 				--env HOME=/deployment \
 				--env SSH_AUTH_SOCK=/ssh-agent \
-				--env GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 				${DOCKER_OPTIONS} \
 				${DOCKER_IMAGE}:${TF_VERSION}
 
