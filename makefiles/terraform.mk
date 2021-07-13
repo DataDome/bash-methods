@@ -1,11 +1,14 @@
 TF_VERSION?=1.0.0
 
+SSH_KNOWN_HOSTS_FILE?=${HOME}/.ssh/known_hosts
+
 DOCKER_IMAGE?=hashicorp/terraform
 
 DOCKER_COMMAND?=docker run \
 				--rm \
 				--volume $(shell pwd):/deployment \
 				--volume ${SSH_AUTH_SOCK}:/ssh-agent \
+				--volume ${SSH_KNOWN_HOSTS_FILE}:/etc/ssh/ssh_known_hosts:ro \
 				--volume /etc/passwd:/etc/passwd:ro \
 				--workdir /deployment \
 				--user "$(shell id -u):$(shell id -g)" \
@@ -36,6 +39,6 @@ shell:
 	@${DOCKER_COMMAND}
 
 clean:
-	@rm -rf .terraform*
+	@find . -name '.terraform*' -not -name '.terraform.lock.hcl' -exec rm -rf {} +
 
 .PHONY: all ssh-config init plan apply shell clean
